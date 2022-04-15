@@ -3,7 +3,9 @@
 
 """Reads in data the forest fire csv file, preprocesses the data, and outputs the training and test datasets
 
-Usage: clean_n_split.py --file_path=<file_path> --test_data_file=<test_data_file> --train_data_file=<train_data_file> 
+Usage: clean_n_split.py --file_path=<file_path> --test_data_file=<test_data_file> --train_data_file=<train_data_file>
+
+python3 clean_n_split.py --file_path=../data/raw/forestfires.csv --test_data_file=test --train_data_file=train
  
 Options:
 --file_path=<file_path>     The path to the forest fire dataset 
@@ -52,8 +54,8 @@ def main(file_path,  test_data_file, train_data_file):
 
     train_df, test_df = train_test_split(ff_data, test_size=0.2, random_state=123)
      
-    test_df.to_csv('data/processed/%s.csv'%(test_data_file),index=False)
-    train_df.to_csv('data/processed/%s.csv'%(train_data_file), index=False)
+    test_df.to_csv('../data/processed/%s.csv'%(test_data_file),index=False)
+    train_df.to_csv('../data/processed/%s.csv'%(train_data_file), index=False)
 
 
 if __name__ == "__main__":

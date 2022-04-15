@@ -4,6 +4,7 @@
 """Reads in the train and test data, and outputs a tuned model and cross-validation results
 
 Usage: evaluate.py --test_data=<test_data> --results_path=<results_path>
+evaluate.py --test_data=../data/processed/test.csv --results_path=results_kr --algo=kr
  
 Options: 
 --test_data=<test_data>          Testing data path
@@ -40,7 +41,7 @@ def load_model(path_prefix):
         
     return model
 
-def evaluate_model(model, X_test, y_test):
+def evaluate_model(model, algo, X_test, y_test):
     """
     Evaluates the best fit model on the test data
 
@@ -61,8 +62,10 @@ def evaluate_model(model, X_test, y_test):
     test_scores = {}
 
     predictions = model.predict(X_test)
-    test_scores[f"SVR_Optimized_MAE"] = mean_absolute_error(y_test, predictions)
-    test_scores[f"SVR_Optimized_RMSE"] = root_mean_squared_error(y_test, predictions)
+#     test_scores[f"SVR_Optimized_MAE"] = mean_absolute_error(y_test, predictions)
+#     test_scores[f"SVR_Optimized_RMSE"] = root_mean_squared_error(y_test, predictions)
+    test_scores[f"{algo}_Optimized_MAE"] = mean_absolute_error(y_test, predictions)
+    test_scores[f"{algo}_Optimized_RMSE"] = root_mean_squared_error(y_test, predictions)
 
     return predictions, pd.DataFrame(test_scores, index=["Test Score"])
 
@@ -110,11 +113,11 @@ def plot_predictions(y_true, y_pred, path_prefix):
 
 
 def main(opt):
-    
+    algo = opt["--algo"]
     model = load_model(opt["--results_path"])
     X_test, y_test = read_data(opt["--test_data"])
     
-    predictions, results = evaluate_model(model, X_test, y_test)
+    predictions, results = evaluate_model(model,algo, X_test, y_test)
     assert(isinstance(results, pd.DataFrame))
 
     store_results(results, opt["--results_path"])

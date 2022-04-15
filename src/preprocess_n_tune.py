@@ -3,11 +3,14 @@
 
 """Reads in the train and test data, and outputs a tuned model and cross-validation results
 
-Usage: preprocess_n_tune.py --train_data=<train_data> --results_path=<results_path>
+Usage: preprocess_n_tune.py --train_data=<train_data> --results_path=<results_path> --algo=<algo>
+
+python3 preprocess_n_tune.py --train_data=../data/processed/train.csv --results_path=results_kr
  
 Options: 
 --train_data=<train_data>        Training data path 
 --results_path=<results_path>    Output path for tuned  model and CV results
+--algo=<algo>                    Choose algo from kr, svr.
 """
 
 import pickle
@@ -21,6 +24,7 @@ from sklearn.compose import (
     make_column_transformer, ColumnTransformer
 )
 from sklearn.svm import SVR
+from sklearn.kernel_ridge import KernelRidge as KR
 from sklearn.metrics import (
     make_scorer,
     mean_squared_error,
@@ -229,14 +233,78 @@ def cross_validate_n_tune(X_train, y_train, column_transformer, scorers):
             scoring=scorer,
             return_train_score=True,
         )
+        params = {
+            "svr__C": loguniform(0.9, 2),
+            "svr__gamma": loguniform(0.01, 1)
+        }
+
+        random_search = RandomizedSearchCV(
+            svr_pipe,
+            params,
+            cv=cv,
+            n_jobs=-1,
+            n_iter=50,
+            random_state=123,
+            scoring=scorers["mae"]
+        )
+
+        random_search.fit(X_train, y_train)
+
+        for name, scorer in scorers.items():
+
+            results[f"SVR_Optimized_{name.upper()}"] = mean_std_cross_val_scores(
+                random_search,
+                X_train,
+                y_train,
+                cv=cv,
+                scoring=scorer,
+                return_train_score=True
+            )
+    return random_search.best_estimator_, pd.DataFrame(results)
+
+
+def cross_validate_n_tune_kernel_ridge(X_train, y_train, column_transformer, scorers):
+    """
+    Cross-validates and tunes a model for the data
+
+    Parameters
+    ----------
+    X_train : numpy array or pandas DataFrame
+        X in the training data
+    y_train : numpy array
+        y in the training data
+    column_transformer: ColumnTransformer
+        ColumnTransformer object for the pipeline
+    scorers: dict
+        dictionary of scorers
+
+    Returns
+    ----------
+        tuple: best fit model, results dataframe
+    """
+    results= {}
+    cv = 10
+    kernel_ridge_pipe = make_pipeline(
+        column_transformer,
+        KR(kernel = "rbf")
+    )
+    for name, scorer in scorers.items():
+            results[f"KR_{name.upper()}"] = mean_std_cross_val_scores(
+                kernel_ridge_pipe,
+                X_train,
+                y_train,
+                cv=cv,
+                scoring=scorer,
+                return_train_score=True,
+            )
 
     params = {
-        "svr__C": loguniform(0.9, 2),
-        "svr__gamma": loguniform(0.01, 1)
-    }
+            "kernelridge__alpha": loguniform(0.96, 2),
+            "kernelridge__gamma": loguniform(0.1, 1)
+        }
 
     random_search = RandomizedSearchCV(
-        svr_pipe,
+        kernel_ridge_pipe,
         params,
         cv=cv,
         n_jobs=-1,
@@ -248,8 +316,7 @@ def cross_validate_n_tune(X_train, y_train, column_transformer, scorers):
     random_search.fit(X_train, y_train)
 
     for name, scorer in scorers.items():
-
-        results[f"SVR_Optimized_{name.upper()}"] = mean_std_cross_val_scores(
+        results[f"KR_Optimized_{name.upper()}"] = mean_std_cross_val_scores(
             random_search,
             X_train,
             y_train,
@@ -257,7 +324,6 @@ def cross_validate_n_tune(X_train, y_train, column_transformer, scorers):
             scoring=scorer,
             return_train_score=True
         )
-        
     return random_search.best_estimator_, pd.DataFrame(results)
 
 def store_model_n_results(model, results, path_prefix):
@@ -280,7 +346,7 @@ def store_model_n_results(model, results, path_prefix):
     dfi.export(results, f"{path_prefix}cv_results.png", table_conversion='matplotlib')
 
 def main(opt):
-    
+    algo = opt["--algo"]
     X_train, y_train = read_data(opt["--train_data"])
     column_transformer = create_column_transformer()
     X_train, y_train = filter_outliers(X_train,
@@ -288,10 +354,16 @@ def main(opt):
                                        column_transformer,
                                        opt['--results_path'])
     scorers = create_scorers()
-    model, results = cross_validate_n_tune(X_train,
-                                           y_train,
-                                           column_transformer,
-                                           scorers)
+    if (algo=="svr"):
+        model, results = cross_validate_n_tune(X_train,
+                                               y_train,
+                                               column_transformer,
+                                               scorers)
+    elif (algo=="kr"):
+        model, results = cross_validate_n_tune_kernel_ridge(X_train,
+                                                       y_train,
+                                                       column_transformer,
+                                                       scorers)
     store_model_n_results(model, results, opt['--results_path'])
 
 if __name__ == "__main__":
