@@ -1,0 +1,14 @@
+ download the git repo
+
+ for SVR
+
+ python3 clean_n_split.py --file_path=../data/raw/forestfires.csv --test_data_file=test --train_data_file=train
+ python3 preprocess_n_tune.py --train_data=../data/processed/train.csv --results_path=results_svr --algo=svr
+ python3 evaluate.py --test_data=../data/processed/test.csv --results_path=results_svr --algo=svr
+
+ for KernelRidge
+
+ python3 clean_n_split.py --file_path=../data/raw/forestfires.csv --test_data_file=test --train_data_file=train
+
+ python3 preprocess_n_tune.py --train_data=../data/processed/train.csv --results_path=results_kr_alpha_1 --algo=kr
+ python3 evaluate.py --test_data=../data/processed/test.csv --results_path=results_kr_alpha_1 --algo=kr
