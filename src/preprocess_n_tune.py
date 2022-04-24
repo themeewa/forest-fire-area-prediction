@@ -12,7 +12,7 @@ Options:
 --results_path=<results_path>    Output path for tuned  model and CV results
 --algo=<algo>                    Choose algo from kr, svr.
 """
-
+import config
 import pickle
 import numpy as np
 import pandas as pd
@@ -297,11 +297,10 @@ def cross_validate_n_tune_kernel_ridge(X_train, y_train, column_transformer, sco
                 scoring=scorer,
                 return_train_score=True,
             )
-
     params = {
-            "kernelridge__alpha": loguniform(0.96, 2),
-            "kernelridge__gamma": loguniform(0.1, 1)
-        }
+                "kernelridge__alpha": kernelridge__alpha,
+                "kernelridge__gamma": kernelridge__gamma
+            }
 
     random_search = RandomizedSearchCV(
         kernel_ridge_pipe,
@@ -340,10 +339,10 @@ def store_model_n_results(model, results, path_prefix):
         output path prefix
     """
     
-    with open(f"{path_prefix}tuned_model.pickle", "wb") as f:
+    with open(f"{path_prefix}_alpha_{config.kernelridge__alpha}_gamma_{config.kernelridge__gamma}tuned_model.pickle", "wb") as f:
         pickle.dump(model, f)
         
-    dfi.export(results, f"{path_prefix}cv_results.png", table_conversion='matplotlib')
+    dfi.export(results, f"{path_prefix}_alpha_{config.kernelridge__alpha}_gamma_{config.kernelridge__gamma}cv_results.png", table_conversion='matplotlib')
 
 def main(opt):
     algo = opt["--algo"]
