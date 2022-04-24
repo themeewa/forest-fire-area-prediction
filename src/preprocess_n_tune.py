@@ -298,8 +298,8 @@ def cross_validate_n_tune_kernel_ridge(X_train, y_train, column_transformer, sco
                 return_train_score=True,
             )
     params = {
-                "kernelridge__alpha": kernelridge__alpha,
-                "kernelridge__gamma": kernelridge__gamma
+                "kernelridge__alpha": config.kernelridge__alpha,
+                "kernelridge__gamma": config.kernelridge__gamma
             }
 
     random_search = RandomizedSearchCV(

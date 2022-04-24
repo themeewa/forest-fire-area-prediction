@@ -8,7 +8,7 @@
 
  for KernelRidge
 
- python3 clean_n_split.py --file_path=../data/raw/forestfires.csv --test_data_file=test --train_data_file=train
+ python clean_n_split.py --file_path=..\data\raw\forestfires.csv --test_data_file=test --train_data_file=train
 
- python3 preprocess_n_tune.py --train_data=../data/processed/train.csv --results_path=KernelRidge --algo=kr
- python3 evaluate.py --test_data=../data/processed/test.csv --results_path=KernelRidge --algo=kr
+ python preprocess_n_tune.py --train_data=..\data\processed\train.csv --results_path=..\results\KernelRidge --algo=kr
+ python evaluate.py --test_data=..\data\processed\test.csv --results_path=..\results\KernelRidge --algo=kr

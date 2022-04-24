@@ -10,7 +10,7 @@ Options:
 --test_data=<test_data>          Testing data path
 --results_path=<results_path>    Output path for test data evaluation results
 """
-
+import config
 import pickle
 import numpy as np
 import pandas as pd
@@ -36,7 +36,7 @@ def load_model(path_prefix):
         Pipeline: saved model
     """
 
-    with open(f"{path_prefix}tuned_model.pickle", "rb") as f:
+    with open(f"{path_prefix}_alpha_{config.kernelridge__alpha}_gamma_{config.kernelridge__gamma}tuned_model.pickle", "rb") as f:
         model = pickle.load(f)
         
     return model
@@ -81,7 +81,7 @@ def store_results(results, path_prefix):
         output path prefix
     """
     
-    dfi.export(results, f"{path_prefix}test_results.png",table_conversion='matplotlib')
+    dfi.export(results, f"{path_prefix}_alpha_{config.kernelridge__alpha}_gamma_{config.kernelridge__gamma}test_results.png",table_conversion='matplotlib')
     
 
 def plot_predictions(y_true, y_pred, path_prefix):
