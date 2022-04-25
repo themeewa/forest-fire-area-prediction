@@ -339,10 +339,10 @@ def store_model_n_results(model, results, path_prefix):
         output path prefix
     """
     
-    with open(f"{path_prefix}_alpha_{config.kernelridge__alpha}_gamma_{config.kernelridge__gamma}tuned_model.pickle", "wb") as f:
+    with open(f"{path_prefix}_{config.result_prefix}_tuned_model.pickle", "wb") as f:
         pickle.dump(model, f)
         
-    dfi.export(results, f"{path_prefix}_alpha_{config.kernelridge__alpha}_gamma_{config.kernelridge__gamma}cv_results.png", table_conversion='matplotlib')
+    dfi.export(results, f"{path_prefix}_{config.result_prefix}_cv_results.png", table_conversion='matplotlib')
 
 def main(opt):
     algo = opt["--algo"]
