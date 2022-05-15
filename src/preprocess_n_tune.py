@@ -122,7 +122,7 @@ def create_column_transformer():
     
     numeric = ['FFMC', 'rain', 'temp', 'RH','wind']
     categorical = []
-    drop = ["X", "Y", "season", "ISI", "DMC", "DC", "", "day", "month"]
+    drop = ["X", "Y", "season", "ISI", "DMC", "DC", "day", "month"]
 
     column_transformer = make_column_transformer(
         (StandardScaler(), numeric),
