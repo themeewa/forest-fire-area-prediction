@@ -64,8 +64,8 @@ def evaluate_model(model, algo, X_test, y_test):
     predictions = model.predict(X_test)
 #     test_scores[f"SVR_Optimized_MAE"] = mean_absolute_error(y_test, predictions)
 #     test_scores[f"SVR_Optimized_RMSE"] = root_mean_squared_error(y_test, predictions)
-    test_scores[f"{algo}_Optimized_MAE"] = mean_absolute_error(y_test, predictions)
-    test_scores[f"{algo}_Optimized_RMSE"] = root_mean_squared_error(y_test, predictions)
+    test_scores[f"Optimized_MAE"] = mean_absolute_error(y_test, predictions)
+    test_scores[f"Optimized_RMSE"] = root_mean_squared_error(y_test, predictions)
 
     return predictions, pd.DataFrame(test_scores, index=["Test Score"])
 

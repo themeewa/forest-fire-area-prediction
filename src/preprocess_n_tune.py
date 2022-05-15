@@ -120,13 +120,13 @@ def create_column_transformer():
         ColumnTransformer: a column transformer object for the pipeline
     """
     
-    numeric = ['FFMC','DMC', 'DC', 'ISI', 'temp', 'RH','wind']
-    categorical = ["X", "Y", "season"]
-    drop = ["rain", "day", "month"]
+    numeric = ['FFMC', 'rain', 'temp', 'RH','wind']
+    categorical = []
+    drop = ["X", "Y", "season", "ISI", "DMC", "DC", "", "day", "month"]
 
     column_transformer = make_column_transformer(
         (StandardScaler(), numeric),
-        (OneHotEncoder(sparse=False, handle_unknown="ignore"), categorical),
+#         (OneHotEncoder(sparse=False, handle_unknown="ignore"), categorical),
         ("drop", drop)
     )
     
