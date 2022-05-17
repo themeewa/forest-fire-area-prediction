@@ -3,8 +3,8 @@
  for SVR
 
  python3 clean_n_split.py --file_path=../data/raw/forestfires.csv --test_data_file=test --train_data_file=train
- python3 preprocess_n_tune.py --train_data=../data/processed/train.csv --results_path=results_svr --algo=svr
- python3 evaluate.py --test_data=../data/processed/test.csv --results_path=results_svr --algo=svr
+ python3 preprocess_n_tune.py --train_data=..\data\processed\train.csv --results_path=..\results\SVR --algo=svr
+ python3 evaluate.py --test_data=..\data\processed\test.csv --results_path=..\results\SVR --algo=svr
 
  for KernelRidge
 
