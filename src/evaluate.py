@@ -21,6 +21,7 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.pipeline import Pipeline
 from preprocess_n_tune import root_mean_squared_error, read_data
 from docopt import docopt
+from slickml.metrics import RegressionMetrics
 
 def load_model(path_prefix):
     """
@@ -66,6 +67,9 @@ def evaluate_model(model, algo, X_test, y_test):
 #     test_scores[f"SVR_Optimized_RMSE"] = root_mean_squared_error(y_test, predictions)
     test_scores[f"Optimized_MAE"] = mean_absolute_error(y_test, predictions)
     test_scores[f"Optimized_RMSE"] = root_mean_squared_error(y_test, predictions)
+#     REC CURVE
+    reg_metrics = RegressionMetrics(y_test, predictions)
+    reg_metrics.plot()
 
     return predictions, pd.DataFrame(test_scores, index=["Test Score"])
 
@@ -109,7 +113,7 @@ def plot_predictions(y_true, y_pred, path_prefix):
 
     plt.xlabel("Log True Area(ha)")
     plt.ylabel("Log Predicted Area(ha)")
-    plt.savefig(f"{path_prefix}predictions.png")
+    plt.savefig(f"{path_prefix}_{config.result_prefix}_predictions.png")
 
 
 def main(opt):
